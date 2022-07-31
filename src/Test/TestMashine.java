@@ -1,5 +1,5 @@
 package Test;
-import Home.*;
+import home.*;
 
 
 public class TestMashine {
