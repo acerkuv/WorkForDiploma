@@ -16,24 +16,20 @@ public class WordGenerator {
             if (numPos==3)   dozenEnd = digClass % 10;
             switch (numPos){
                 case 0, 2 ->  wordsCollected[numPos] = keywordDataMaker.getHundredsThousandsMap().get(digClass);
-                case 1 ->  wordsCollected[numPos] = (digClass == 0 && dozenThousands != 0)? "тысяч":
-                        (digClass < 20 )? keywordDataMaker.getThousandMap().get(digClass):
-                                (isDozenTrue)? keywordDataMaker.getDozenMap().get(digClass/10) + " тысяч":
-                                        (digClass% 10 == 1)?
-                                                keywordDataMaker.getDozenMap().get(digClass/10) + " " +
-                                                        keywordDataMaker.getThousandMap().get(digClass % 10) + " тысяча":
-                                                (digClass% 10 == 2)?
-                                                        keywordDataMaker.getDozenMap().get(digClass/10) + " " +
-                                                                keywordDataMaker.getUnitsMap().get(digClass % 10) + " тысячи":
-                                                        keywordDataMaker.getDozenMap().get(digClass/10) + " " +
-
-                                                                keywordDataMaker.getUnitsMap().get(digClass % 10) + " тысяч";
+                case 1 -> wordsCollected[numPos] = thousandsWords(digClass);
+//                case 1 ->  wordsCollected[numPos] = (digClass == 0 && dozenThousands != 0)? "тысяч":
+//                        (digClass < 20 )? keywordDataMaker.getThousandMap().get(digClass):
+//                                (isDozenTrue)? keywordDataMaker.getDozenMap().get(digClass/10) + " тысяч":
+//                                        (digClass% 10 == 1)?
+//                                                keywordDataMaker.getDozenMap().get(digClass/10) + " " +
+//                                                        keywordDataMaker.getThousandMap().get(digClass % 10) + " тысяча":
+//                                                (digClass% 10 == 2)?
+//                                                        keywordDataMaker.getDozenMap().get(digClass/10) + " " +
+//                                                                keywordDataMaker.getUnitsMap().get(digClass % 10) + " тысячи":
+//                                                        keywordDataMaker.getDozenMap().get(digClass/10) + " " +
+//
+//                                                                keywordDataMaker.getUnitsMap().get(digClass % 10) + " тысяч";
                  case 3 -> wordsCollected[numPos] = wordForSegmentation(digClass);
-//                case 3 ->  wordsCollected[numPos] =(digClass < 20)? keywordDataMaker.getUnitsMap().get(digClass):
-//                        (isDozenTrue)? keywordDataMaker.getDozenMap().get(digClass/10):
-//                                keywordDataMaker.getDozenMap().get(digClass/10) + " " +
-//                                        keywordDataMaker.getUnitsMap().get(digClass % 10);
-
             }
             numPos++;
         }
@@ -46,14 +42,15 @@ public class WordGenerator {
         }
         return wordsCollected;
     }
-    // if less 20 then
+    // Процедура генерации слов
     protected String wordForSegmentation (int digClass){
         StringBuilder digToWord = new StringBuilder();
-        boolean isNotZero = digClass % 10 != 0 && digClass/10 != 0;
+        boolean isNotZero =  digClass/10 != 0;
+        // блокировка нулевого (null) значения в выдаче
         if(!isNotZero){
             return "";
         }
-        else if(digClass < 20){
+        if(digClass < 20){
             digToWord.append(keywordDataMaker.getUnitsMap().get(digClass));
            return  String.valueOf(digToWord);
         } else if (digClass > 19 && digClass % 10 == 0) {
@@ -64,5 +61,16 @@ public class WordGenerator {
             return String.valueOf(digToWord);
         }
 
+    }
+    private String thousandsWords(int digClass){
+        int endOfDigClass = digClass % 10;
+        StringBuilder thousandsToWord = new StringBuilder();
+        String thousandsWords = wordForSegmentation(digClass);
+        thousandsToWord.append(thousandsWords);
+//        if (endOfDigClass == 0 || endOfDigClass > 4) thousandsToWord.append(" тысяч");
+//        else if (endOfDigClass == 1 ) thousandsToWord.append(" тысяча");
+//        else if (endOfDigClass > 0 && endOfDigClass < 5)  thousandsToWord.append(" тысячи");
+        thousandsToWord.append(" тысячи");
+        return String.valueOf(thousandsToWord);
     }
 }
