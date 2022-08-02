@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class WordGen2 {
     private final KeywordDataMaker keywordDataMaker = new KeywordDataMaker();
-    private String [] WordsCollected = new String[6];
+    private final String [] WordsCollected = new String[6];
 
     public String [] WordMaker(int[] amount, String typeOfCurrency){
         keywordDataMaker.fillAllMaps();
@@ -31,38 +31,34 @@ public class WordGen2 {
         System.out.println(Arrays.toString(WordsCollected));
         return WordsCollected;
     }
-    private String selectRightWord(int dig, int digSegment){
+    private String selectRightWord(int dig, int digSegment) {
         StringBuilder resultWords = new StringBuilder();
+        boolean isThousands = dig !=0 & digSegment ==0;
         if (digSegment == 0 || digSegment == 2) return keywordDataMaker.getHundredsThousandsMap().get(dig);
         else if (digSegment == 1) {
-            if (dig == 0) {
+            if (dig == 0 & !isThousands) {
                 return "тысяч";
-            } else if (dig==1) {
-                resultWords.append(keywordDataMaker.getFirstThousandsTranslator().get(dig)).append(" ");
-                resultWords.append(keywordDataMaker.getEndOfThousandsMap().get(dig));
+            } else if (dig == 1) {
+                resultWords.append(keywordDataMaker.getFirstThousandsTranslator().get(1));
+                resultWords.append(" ").append(keywordDataMaker.getEndOfThousandsMap().get(1));
                 return String.valueOf(resultWords);
+            }else if (dig % 10 == 2) {
+                if (dig / 10 == 0) {
+                    resultWords.append(keywordDataMaker.getFirstThousandsTranslator().get(1));
+                    resultWords.append(" ").append(keywordDataMaker.getEndOfThousandsMap().get(1));
+                }else{
+                    resultWords.append(keywordDataMaker.getFirstThousandsTranslator().get(2));
+                    resultWords.append(" ").append(keywordDataMaker.getEndOfThousandsMap().get(2));
+                }
+            }else{
+                return dozenDecoder(dig) + " тысяч";
             }
-            else if (dig == 2) {
-                resultWords.append(keywordDataMaker.getFirstThousandsTranslator().get(dig)).append(" ");
-                resultWords.append(keywordDataMaker.getEndOfThousandsMap().get(dig));
-                return String.valueOf(resultWords);
-            }
-
-              else  if (dig > 2 || dig < 5 ) {
-                resultWords.append(dozenDecoder(dig)).append(" ");
-                resultWords.append(keywordDataMaker.getEndOfThousandsMap().get(2));
-                return String.valueOf(resultWords);
-            }
-
-            else {
-                String dozenRez = dozenDecoder(dig) + " тысяч";
-                return dozenRez;
-            }
+        }else{
+            return  dozenDecoder(dig);
         }
-        else{
-            return dozenDecoder(dig);
-            }
-        }
+
+        return  String.valueOf(resultWords);
+    }
 
     private String dozenDecoder(int dozen){
         StringBuilder stringBuilder = new StringBuilder();
